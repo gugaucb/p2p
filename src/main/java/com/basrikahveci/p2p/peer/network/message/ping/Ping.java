@@ -1,5 +1,6 @@
 package com.basrikahveci.p2p.peer.network.message.ping;
 
+import com.basrikahveci.p2p.peer.Config;
 import com.basrikahveci.p2p.peer.Peer;
 import com.basrikahveci.p2p.peer.network.Connection;
 import com.basrikahveci.p2p.peer.network.message.Message;
@@ -20,12 +21,18 @@ public class Ping implements Message {
     private final long pingTimeoutDurationInMillis;
 
     private transient long pingStartTimestamp;
+    
+    private final byte[] publicKey;
+    
+    private final String publicKeyAlgorithm;
 
     public Ping(String peerName, int ttl, int hops, long pingTimeoutDurationInMillis) {
         this.peerName = peerName;
         this.ttl = ttl;
         this.hops = hops;
         this.pingTimeoutDurationInMillis = pingTimeoutDurationInMillis;
+        this.publicKey = Config.getPublicKey();
+        this.publicKeyAlgorithm = Config.getPublicKeyAlgorithm();
     }
 
     public String getPeerName() {

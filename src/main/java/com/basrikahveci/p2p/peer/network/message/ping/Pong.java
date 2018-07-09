@@ -1,5 +1,6 @@
 package com.basrikahveci.p2p.peer.network.message.ping;
 
+import com.basrikahveci.p2p.peer.Config;
 import com.basrikahveci.p2p.peer.Peer;
 import com.basrikahveci.p2p.peer.network.Connection;
 import com.basrikahveci.p2p.peer.network.message.Message;
@@ -24,6 +25,10 @@ public class Pong implements Message {
     private final int ttl;
 
     private final int hops;
+    
+    private final byte[] publicKey;
+    
+    private final String publicKeyAlgorithm;
 
     public Pong(String pingPeerName, String senderPeerName, String peerName, String serverHost, int serverPort, int ttl,
                 int hops) {
@@ -34,6 +39,8 @@ public class Pong implements Message {
         this.serverPort = serverPort;
         this.ttl = ttl;
         this.hops = hops;
+        this.publicKey = Config.getPublicKey();
+        this.publicKeyAlgorithm = Config.getPublicKeyAlgorithm();
     }
 
     public String getPingPeerName() {

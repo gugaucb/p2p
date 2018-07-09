@@ -1,21 +1,29 @@
 package com.basrikahveci.p2p.peer;
 
-import com.basrikahveci.p2p.peer.network.Connection;
-import com.basrikahveci.p2p.peer.network.message.ping.CancelPongs;
-import com.basrikahveci.p2p.peer.network.message.ping.Ping;
-import com.basrikahveci.p2p.peer.network.message.ping.Pong;
-import com.basrikahveci.p2p.peer.service.ConnectionService;
-import com.basrikahveci.p2p.peer.service.LeadershipService;
-import com.basrikahveci.p2p.peer.service.PingService;
-import io.netty.channel.Channel;
+import static java.lang.Math.min;
+
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import com.basrikahveci.p2p.peer.network.Connection;
+import com.basrikahveci.p2p.peer.network.message.ping.Block;
+import com.basrikahveci.p2p.peer.network.message.ping.CancelPongs;
+import com.basrikahveci.p2p.peer.network.message.ping.Ping;
+import com.basrikahveci.p2p.peer.network.message.ping.Pong;
+import com.basrikahveci.p2p.peer.service.BlockChainService;
+import com.basrikahveci.p2p.peer.service.ConnectionService;
+import com.basrikahveci.p2p.peer.service.LeadershipService;
+import com.basrikahveci.p2p.peer.service.PingService;
 
-import static java.lang.Math.min;
+import io.netty.channel.Channel;
 
 public class Peer {
 
@@ -28,6 +36,8 @@ public class Peer {
     private final ConnectionService connectionService;
 
     private final PingService pingService;
+    
+    private final BlockChainService blockChainService;
 
     private final LeadershipService leadershipService;
 
@@ -35,11 +45,12 @@ public class Peer {
 
     private boolean running = true;
 
-    public Peer(Config config, ConnectionService connectionService, PingService pingService, LeadershipService leadershipService) {
+    public Peer(Config config, ConnectionService connectionService, PingService pingService, LeadershipService leadershipService, BlockChainService blockChainService) {
         this.config = config;
         this.connectionService = connectionService;
         this.pingService = pingService;
         this.leadershipService = leadershipService;
+        this.blockChainService = blockChainService;
     }
 
     public void handleConnectionOpened(Connection connection, String leaderName) {
@@ -99,6 +110,14 @@ public class Peer {
     public void handlePing(Connection connection, Ping ping) {
         if (running) {
             pingService.handlePing((InetSocketAddress) bindChannel.localAddress(), connection, ping);
+        } else {
+            LOGGER.warn("Ping of {} is ignored since not running", connection.getPeerName());
+        }
+    }
+    
+    public void handleBlock(Connection connection, Block block) {
+        if (running) {
+        	blockChainService.handleBlock((InetSocketAddress) bindChannel.localAddress(), connection, block);
         } else {
             LOGGER.warn("Ping of {} is ignored since not running", connection.getPeerName());
         }

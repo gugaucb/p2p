@@ -1,6 +1,12 @@
 package com.basrikahveci.p2p.peer;
 
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.concurrent.TimeUnit;
+
+import com.basrikahveci.p2p.security.GenerateKeys;
+import com.basrikahveci.p2p.util.Utils;
 
 public class Config {
 
@@ -20,7 +26,16 @@ public class Config {
 
     public static final int DEFAULT_LEADER_REJECTION_TIMEOUT_SECONDS = 10;
 
-
+    private static byte[] publicKey;
+    
+    private static String publicKeyAlgorithm;
+    
+    private static byte[] privateKey;
+    
+    private static String privateKeyAlgorithm;
+    
+    private static KeyPair keyPair;
+    
     /**
      * Name of the peer. It must be unique across the p2p network
      */
@@ -146,6 +161,40 @@ public class Config {
     public void setLeaderRejectionTimeoutSeconds(int leaderRejectionTimeoutSeconds) {
         this.leaderRejectionTimeoutSeconds = leaderRejectionTimeoutSeconds;
     }
+    
+    public static byte[] getPublicKey() {
+		return publicKey;
+	}
+
+	public static void setPublicKey(byte[] publicKey) {
+		Config.publicKey = publicKey;
+	}
+
+	public static String getPublicKeyAlgorithm() {
+		return publicKeyAlgorithm;
+	}
+
+	public static void setPublicKeyAlgorithm(String publicKeyAlgorithm) {
+		Config.publicKeyAlgorithm = publicKeyAlgorithm;
+	}
+
+	public void generateKeys() {
+    	  try {
+  			this.keyPair = new GenerateKeys().createKeyPair();
+  			this.publicKey = keyPair.getPublic().getEncoded();
+  			this.publicKeyAlgorithm = keyPair.getPublic().getAlgorithm();
+  			this.privateKey = keyPair.getPrivate().getEncoded();
+  			this.publicKeyAlgorithm = keyPair.getPrivate().getAlgorithm();
+  			
+  		} catch (NoSuchAlgorithmException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		} catch (NoSuchProviderException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		}
+    }
+    
 
     @Override
     public String toString() {
@@ -159,6 +208,7 @@ public class Config {
                 ", autoDiscoveryPingFrequency=" + autoDiscoveryPingFrequency +
                 ", leaderElectionTimeoutSeconds=" + leaderElectionTimeoutSeconds +
                 ", leaderRejectionTimeoutSeconds=" + leaderRejectionTimeoutSeconds +
+                ", publicKey="+Utils.printKey(keyPair)+
                 '}';
     }
 }

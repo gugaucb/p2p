@@ -133,6 +133,7 @@ public class Main {
         final int portToBind = (int) options.valueOf(BIND_PORT_PARAMETER);
 
         final Config config = new Config();
+        config.generateKeys();
         config.setPeerName(peerName);
         populateConfig(options, config);
 
