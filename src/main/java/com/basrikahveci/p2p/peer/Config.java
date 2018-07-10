@@ -1,12 +1,9 @@
 package com.basrikahveci.p2p.peer;
 
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.concurrent.TimeUnit;
 
-import com.basrikahveci.p2p.security.GenerateKeys;
-import com.basrikahveci.p2p.util.Utils;
+import com.basrikahveci.p2p.peer.security.Cripto;
 
 public class Config {
 
@@ -163,37 +160,15 @@ public class Config {
     }
     
     public static byte[] getPublicKey() {
-		return publicKey;
+		return Cripto.getInstance().getPublicKey().getEncoded();
 	}
 
-	public static void setPublicKey(byte[] publicKey) {
-		Config.publicKey = publicKey;
-	}
 
 	public static String getPublicKeyAlgorithm() {
-		return publicKeyAlgorithm;
+		return Cripto.getInstance().getPublicKey().getAlgorithm();
 	}
 
-	public static void setPublicKeyAlgorithm(String publicKeyAlgorithm) {
-		Config.publicKeyAlgorithm = publicKeyAlgorithm;
-	}
 
-	public void generateKeys() {
-    	  try {
-  			this.keyPair = new GenerateKeys().createKeyPair();
-  			this.publicKey = keyPair.getPublic().getEncoded();
-  			this.publicKeyAlgorithm = keyPair.getPublic().getAlgorithm();
-  			this.privateKey = keyPair.getPrivate().getEncoded();
-  			this.publicKeyAlgorithm = keyPair.getPrivate().getAlgorithm();
-  			
-  		} catch (NoSuchAlgorithmException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		} catch (NoSuchProviderException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		}
-    }
     
 
     @Override
@@ -208,7 +183,7 @@ public class Config {
                 ", autoDiscoveryPingFrequency=" + autoDiscoveryPingFrequency +
                 ", leaderElectionTimeoutSeconds=" + leaderElectionTimeoutSeconds +
                 ", leaderRejectionTimeoutSeconds=" + leaderRejectionTimeoutSeconds +
-                ", publicKey="+Utils.printKey(keyPair)+
+                ", publicKey="+Cripto.getInstance().printKey(keyPair)+
                 '}';
     }
 }

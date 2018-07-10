@@ -1,6 +1,7 @@
 package com.basrikahveci.p2p.peer;
 
 import static java.lang.Math.min;
+import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.basrikahveci.p2p.peer.network.Connection;
-import com.basrikahveci.p2p.peer.network.message.ping.Block;
+import com.basrikahveci.p2p.peer.network.message.RequestValidation;
+import com.basrikahveci.p2p.peer.network.message.ResultValidation;
 import com.basrikahveci.p2p.peer.network.message.ping.CancelPongs;
 import com.basrikahveci.p2p.peer.network.message.ping.Ping;
 import com.basrikahveci.p2p.peer.network.message.ping.Pong;
@@ -22,8 +24,6 @@ import com.basrikahveci.p2p.peer.service.BlockChainService;
 import com.basrikahveci.p2p.peer.service.ConnectionService;
 import com.basrikahveci.p2p.peer.service.LeadershipService;
 import com.basrikahveci.p2p.peer.service.PingService;
-
-import io.netty.channel.Channel;
 
 public class Peer {
 
@@ -115,13 +115,6 @@ public class Peer {
         }
     }
     
-    public void handleBlock(Connection connection, Block block) {
-        if (running) {
-        	blockChainService.handleBlock((InetSocketAddress) bindChannel.localAddress(), connection, block);
-        } else {
-            LOGGER.warn("Ping of {} is ignored since not running", connection.getPeerName());
-        }
-    }
 
     public void handlePong(Connection connection, Pong pong) {
         if (running) {
@@ -292,5 +285,26 @@ public class Peer {
     private boolean isShutdown() {
         return !running;
     }
+
+	public void handleRequestBlock(Connection connection,
+			RequestValidation requestValidation) {
+		  if (running) {
+	        	blockChainService.handleRequestValidation((InetSocketAddress) bindChannel.localAddress(), connection, requestValidation);
+	        } else {
+	            LOGGER.warn("Request Validation of {} is ignored since not running", connection.getPeerName());
+	        }
+		
+	}
+
+	public void handleResultValidation(Connection connection,
+			ResultValidation resultValidation) {
+		  if (running) {
+	        	blockChainService.handleResultValidation((InetSocketAddress) bindChannel.localAddress(), connection, resultValidation);
+	        } else {
+	            LOGGER.warn("Request Validation of {} is ignored since not running", connection.getPeerName());
+	        }
+		
+	}
+
 
 }

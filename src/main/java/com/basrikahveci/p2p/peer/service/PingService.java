@@ -1,5 +1,20 @@
 package com.basrikahveci.p2p.peer.service;
 
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.basrikahveci.p2p.peer.Config;
 import com.basrikahveci.p2p.peer.network.Connection;
 import com.basrikahveci.p2p.peer.network.message.KeepAlive;
@@ -7,13 +22,6 @@ import com.basrikahveci.p2p.peer.network.message.ping.CancelPings;
 import com.basrikahveci.p2p.peer.network.message.ping.CancelPongs;
 import com.basrikahveci.p2p.peer.network.message.ping.Ping;
 import com.basrikahveci.p2p.peer.network.message.ping.Pong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Maintains all of the ongoing Ping operations either initiated by this peer or other peers in the network

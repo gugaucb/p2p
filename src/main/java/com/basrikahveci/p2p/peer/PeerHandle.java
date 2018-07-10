@@ -1,6 +1,16 @@
 package com.basrikahveci.p2p.peer;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -17,17 +27,6 @@ import com.basrikahveci.p2p.peer.service.ConnectionService;
 import com.basrikahveci.p2p.peer.service.LeadershipService;
 import com.basrikahveci.p2p.peer.service.PingService;
 import com.google.common.util.concurrent.SettableFuture;
-
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
 public class PeerHandle {
 
