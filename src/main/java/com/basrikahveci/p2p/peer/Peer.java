@@ -14,16 +14,16 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.basrikahveci.p2p.blockchain.Transaction;
 import com.basrikahveci.p2p.peer.network.Connection;
-import com.basrikahveci.p2p.peer.network.message.RequestValidation;
 import com.basrikahveci.p2p.peer.network.message.ResultValidation;
 import com.basrikahveci.p2p.peer.network.message.ping.CancelPongs;
 import com.basrikahveci.p2p.peer.network.message.ping.Ping;
 import com.basrikahveci.p2p.peer.network.message.ping.Pong;
-import com.basrikahveci.p2p.peer.service.BlockChainService;
 import com.basrikahveci.p2p.peer.service.ConnectionService;
 import com.basrikahveci.p2p.peer.service.LeadershipService;
 import com.basrikahveci.p2p.peer.service.PingService;
+import com.basrikahveci.p2p.peer.service.TransactionService;
 
 public class Peer {
 
@@ -37,7 +37,7 @@ public class Peer {
 
     private final PingService pingService;
     
-    private final BlockChainService blockChainService;
+    private final TransactionService trasactionService;
 
     private final LeadershipService leadershipService;
 
@@ -45,12 +45,12 @@ public class Peer {
 
     private boolean running = true;
 
-    public Peer(Config config, ConnectionService connectionService, PingService pingService, LeadershipService leadershipService, BlockChainService blockChainService) {
+    public Peer(Config config, ConnectionService connectionService, PingService pingService, LeadershipService leadershipService, TransactionService transactionService) {
         this.config = config;
         this.connectionService = connectionService;
         this.pingService = pingService;
         this.leadershipService = leadershipService;
-        this.blockChainService = blockChainService;
+        this.trasactionService = transactionService;
     }
 
     public void handleConnectionOpened(Connection connection, String leaderName) {
@@ -247,6 +247,15 @@ public class Peer {
 
         pingService.ping(futureToNotify);
     }
+    
+    public void executeTransaction(final CompletableFuture<Collection<String>> futureToNotify) {
+        if (isShutdown()) {
+            futureToNotify.completeExceptionally(new RuntimeException("Disconnected!"));
+            return;
+        }
+
+        trasactionService.executeTransaction(futureToNotify);
+    }
 
     public void leave(final CompletableFuture<Void> futureToNotify) {
         if (isShutdown()) {
@@ -286,23 +295,23 @@ public class Peer {
         return !running;
     }
 
-	public void handleRequestBlock(Connection connection,
-			RequestValidation requestValidation) {
+
+	public void handleResultValidation(Connection connection,
+			ResultValidation resultValidation) {
 		  if (running) {
-	        	blockChainService.handleRequestValidation((InetSocketAddress) bindChannel.localAddress(), connection, requestValidation);
+	        	trasactionService.handleResultValidation((InetSocketAddress) bindChannel.localAddress(), connection, resultValidation);
 	        } else {
 	            LOGGER.warn("Request Validation of {} is ignored since not running", connection.getPeerName());
 	        }
 		
 	}
 
-	public void handleResultValidation(Connection connection,
-			ResultValidation resultValidation) {
-		  if (running) {
-	        	blockChainService.handleResultValidation((InetSocketAddress) bindChannel.localAddress(), connection, resultValidation);
-	        } else {
-	            LOGGER.warn("Request Validation of {} is ignored since not running", connection.getPeerName());
-	        }
+	public void handleTransaction(Connection connection, Transaction transaction) {
+		if (running) {
+        	trasactionService.handleTransaction((InetSocketAddress) bindChannel.localAddress(), connection, transaction);
+        } else {
+            LOGGER.warn("Request Validation of {} is ignored since not running", connection.getPeerName());
+        }
 		
 	}
 

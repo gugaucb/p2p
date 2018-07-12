@@ -18,10 +18,14 @@ public class Config {
     public static final int DEFAULT_AUTO_DISCOVERY_PING_FREQUENCY = 10;
 
     public static final int DEFAULT_PING_TTL = 7;
+    
+    public static final int DEFAULT_ADD_BLOCK_TTL = 7;
 
     public static final int DEFAULT_LEADER_ELECTION_TIMEOUT_SECONDS = 5;
 
     public static final int DEFAULT_LEADER_REJECTION_TIMEOUT_SECONDS = 10;
+
+	private static final int TRANSACTION_TIMEOUT_MILLIS = 5;
 
     private static byte[] publicKey;
     
@@ -59,10 +63,17 @@ public class Config {
      */
     private int pingTimeoutSeconds = DEFAULT_PING_TIMEOUT_SECONDS;
 
+    private int transactionTimeoutMillis = TRANSACTION_TIMEOUT_MILLIS;
+    
     /**
      * Amount of neighbour jumps an initial ping message will do
      */
     private int pingTTL = DEFAULT_PING_TTL;
+    
+    /**
+     * Amount of neighbour jumps an initial add block message will do
+     */
+    private int addBlockTTL = DEFAULT_ADD_BLOCK_TTL;
 
     /**
      * When a peer automatically sends keep-alive messages periodically, it makes the
@@ -135,7 +146,15 @@ public class Config {
         this.pingTTL = pingTTL;
     }
 
-    public int getAutoDiscoveryPingFrequency() {
+    public int getAddBlockTTL() {
+		return addBlockTTL;
+	}
+
+	public void setAddBlockTTL(int addBlockTTL) {
+		this.addBlockTTL = addBlockTTL;
+	}
+
+	public int getAutoDiscoveryPingFrequency() {
         return autoDiscoveryPingFrequency;
     }
 
@@ -186,4 +205,8 @@ public class Config {
                 ", publicKey="+Cripto.getInstance().printKey(keyPair)+
                 '}';
     }
+
+	public long getTransactionTimeoutMillis() {
+		return TimeUnit.SECONDS.toMillis(transactionTimeoutMillis);
+	}
 }

@@ -50,7 +50,9 @@ public class PeerRunner {
                 handle.disconnect(tokens[1]);
             } else if (command.equals("election")) {
                 handle.scheduleLeaderElection();
-            } else {
+            }else if (command.equals("transaction")) {
+                handle.transaction();
+            }else {
                 result = INVALID_COMMAND;
             }
         } catch (Exception e) {

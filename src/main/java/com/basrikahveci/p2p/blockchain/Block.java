@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,15 @@ public class Block {
 		this.previousHash = previousHash;
 	}
 
-
+	public String toJson(){
+		return JSONStringer.valueToString(this);
+	}
+	
+	public Block toBlock(String json){
+		JSONObject blockJsonObject = new JSONObject(json);
+		JSONObject payLoadJsonObject = new JSONObject(blockJsonObject.get("payload"));
+		return new Block(blockJsonObject.getLong("index"),blockJsonObject.getLong("timestamp"), new Payload(), blockJsonObject.getString("previousHash"));
+	}
 
 	public String calculateHash() {
 		String hash = "";
@@ -103,6 +112,11 @@ public class Block {
 	public String toString() {
 		String obj = JSONStringer.valueToString(this);
 		return obj;
+	}
+	
+	public static Block encrypt(Block block){
+		
+		return null;
 	}
 
 }

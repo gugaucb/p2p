@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.basrikahveci.p2p.peer.network.PeerChannelHandler;
 import com.basrikahveci.p2p.peer.network.PeerChannelInitializer;
-import com.basrikahveci.p2p.peer.service.BlockChainService;
+import com.basrikahveci.p2p.peer.service.TransactionService;
 import com.basrikahveci.p2p.peer.service.ConnectionService;
 import com.basrikahveci.p2p.peer.service.LeadershipService;
 import com.basrikahveci.p2p.peer.service.PingService;
@@ -57,7 +57,7 @@ public class PeerHandle {
         final ConnectionService connectionService = new ConnectionService(config, networkEventLoopGroup, peerEventLoopGroup, encoder);
         final LeadershipService leadershipService = new LeadershipService(connectionService, config, peerEventLoopGroup);
         final PingService pingService = new PingService(connectionService, leadershipService, config);
-        final BlockChainService blockChainService = new BlockChainService(connectionService, config);
+        final TransactionService blockChainService = new TransactionService(connectionService, config);
         this.peer = new Peer(config, connectionService, pingService, leadershipService, blockChainService);
     }
 
@@ -148,5 +148,12 @@ public class PeerHandle {
     public void disconnect(final String peerName) {
         peerEventLoopGroup.execute(() -> peer.disconnect(peerName));
     }
+
+	public CompletableFuture<Collection<String>> transaction() {
+		 final CompletableFuture<Collection<String>> future = new CompletableFuture<>();
+	        peerEventLoopGroup.execute(() -> peer.executeTransaction(future));
+	        return future;
+		
+	}
 
 }
