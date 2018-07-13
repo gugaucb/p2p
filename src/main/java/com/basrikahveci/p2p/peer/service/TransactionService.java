@@ -68,7 +68,7 @@ public class TransactionService {
 		com.basrikahveci.p2p.blockchain.Block block = transaction.getBlock();
 		BlockChain.getInstance().addBlock(block);
 		if (BlockChain.getInstance().isChainValid()) {
-
+			LOGGER.info("Chain Valid");
 			transaction
 					.setTransactionStartTimestamp(System.currentTimeMillis());
 
@@ -117,7 +117,7 @@ public class TransactionService {
      * @param future future to be informed once the Ping is completed.
      */
 	public void executeTransaction(CompletableFuture<Collection<String>> future) {
-		/* TransactionContext transactionContext = currentTransaction.get(config.getPeerName());
+		 TransactionContext transactionContext = currentTransaction.get(config.getPeerName());
 	        if (transactionContext == null) {
 	            transactionContext = discoveryTransaction();
 	        } else {
@@ -126,15 +126,15 @@ public class TransactionService {
 
 	        if (future != null) {
 	            transactionContext.addFuture(future);
-	        }*/
-		LOGGER.info("Initing send message");
+	        }
+/*		LOGGER.info("Initing send message");
 		Collection<Connection> connections = connectionService.getConnections();
 		for (Iterator iterator = connections.iterator(); iterator.hasNext();) {
 			Connection connection = (Connection) iterator.next();
 			connection.send(new Transaction(this.config.getPeerName(), 1, 1, 5));
 			LOGGER.info("Peer: {}",connection.getPeerName());
 		}
-		LOGGER.info("Finished send message");
+		LOGGER.info("Finished send message");*/
 	}
 	
 	private TransactionContext discoveryTransaction() {
